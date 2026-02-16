@@ -1,30 +1,34 @@
 <?php
 
-use app\controllers\ApiExampleController;
-use app\middlewares\SecurityHeadersMiddleware;
-use flight\Engine;
-use flight\net\Router;
+// Routes principales
+Flight::route('GET /', 'DashboardController::index');
 
-/** 
- * @var Router $router 
- * @var Engine $app
- */
+// Régions
+Flight::route('GET /regions', 'RegionController::index');
+Flight::route('POST /regions/create', 'RegionController::create');
+Flight::route('POST /regions/delete/@id', 'RegionController::delete');
 
-// This wraps all routes in the group with the SecurityHeadersMiddleware
-$router->group('', function(Router $router) use ($app) {
+// Villes
+Flight::route('GET /villes', 'VilleController::index');
+Flight::route('POST /villes/create', 'VilleController::create');
+Flight::route('POST /villes/delete/@id', 'VilleController::delete');
 
-	$router->get('/', function() use ($app) {
-		$app->render('welcome', [ 'message' => 'You are gonna do great things!' ]);
-	});
+// Besoins
+Flight::route('GET /besoins', 'BesoinController::index');
+Flight::route('POST /besoins/create', 'BesoinController::create');
+Flight::route('POST /besoins/delete/@id', 'BesoinController::delete');
 
-	$router->get('/hello-world/@name', function($name) {
-		echo '<h1>Hello '.$name.'!</h1>';
-	});
+// Dons
+Flight::route('GET /dons', 'DonController::index');
+Flight::route('POST /dons/create', 'DonController::create');
+Flight::route('POST /dons/delete/@id', 'DonController::delete');
 
-	$router->group('/api', function() use ($router) {
-		$router->get('/users', [ ApiExampleController::class, 'getUsers' ]);
-		$router->get('/users/@id:[0-9]', [ ApiExampleController::class, 'getUser' ]);
-		$router->post('/users/@id:[0-9]', [ ApiExampleController::class, 'updateUser' ]);
-	});
-	
-}, [ SecurityHeadersMiddleware::class ]);
+// Dispatch
+Flight::route('GET /dispatch', 'DispatchController::index');
+Flight::route('POST /dispatch/run', 'DispatchController::run');
+Flight::route('POST /dispatch/reset', 'DispatchController::reset');
+
+// Route 404
+Flight::map('notFound', function() {
+    Flight::redirect('/');
+});
