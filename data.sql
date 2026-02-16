@@ -1,0 +1,55 @@
+-- Table : utilisateurs
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(200),
+    email VARCHAR(150) NOT NULL UNIQUE,
+    mdp VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Table : villes
+CREATE TABLE IF NOT EXISTS villes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Table : besoins
+CREATE TABLE IF NOT EXISTS besoins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ville_id INT NOT NULL,
+    type ENUM('nature', 'materiaux', 'argent') NOT NULL,
+    designation VARCHAR(100) NOT NULL,
+    quantite DECIMAL(10,2) NOT NULL,
+    prix_unitaire DECIMAL(10,2) NOT NULL,
+    date_saisie DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ville_id) REFERENCES villes(id) ON DELETE CASCADE
+);
+
+-- Table : dons
+CREATE TABLE IF NOT EXISTS dons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type ENUM('nature', 'materiaux', 'argent') NOT NULL,
+    designation VARCHAR(100) NOT NULL,
+    quantite DECIMAL(10,2) NOT NULL,
+    date_saisie DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Table : dispatch (distribution des dons vers les besoins)
+CREATE TABLE IF NOT EXISTS dispatch (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    don_id INT NOT NULL,
+    besoin_id INT NOT NULL,
+    quantite_attribuee DECIMAL(10,2) NOT NULL,
+    date_dispatch DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (don_id) REFERENCES dons(id) ON DELETE CASCADE,
+    FOREIGN KEY (besoin_id) REFERENCES besoins(id) ON DELETE CASCADE
+);
